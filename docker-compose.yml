@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+    postgres:
+        image: "postgres:13.3"
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+            POSTGRES_DB: "didenok"
+            PGDATA: "/var/lib/postgresql/data/pgdata"
+        volumes:
+          - ./db-scripts:/docker-entrypoint-initdb.d
+        #   - <path to db folder on pc>:/var/lib/postgresql/data
+        networks:
+            - back   
+        ports:
+            - "5432:5432" 
+
+    web:
+        environment:
+            POSTGRES_SERVER: "postgres"
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "password"
+            POSTGRES_DB: "didenok"
+        build: ./app
+        ports:
+            - 80:80
+        volumes:
+            - .:/code
+        command: uvicorn app.main:app --reload --host 0.0.0.0 --port 80
+        networks:
+            - back
+        depends_on:
+            - postgres
+
+
+networks:
+    back:
