@@ -15,6 +15,12 @@ services:
             - back   
         ports:
             - "5432:5432" 
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 120s
 
     web:
         environment:
@@ -32,6 +38,12 @@ services:
             - back
         depends_on:
             - postgres
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 5s
+                max_attempts: 3
+                window: 120s
 
 
 networks:
